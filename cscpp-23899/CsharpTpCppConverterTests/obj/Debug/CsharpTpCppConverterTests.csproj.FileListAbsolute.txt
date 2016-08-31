@@ -1,0 +1,25 @@
+C:\Users\Alexander\Documents\Visual Studio 2012\Projects\CsharpToCppConverter\CsharpTpCppConverterTests\bin\Debug\CsharpTpCppConverterTests.dll
+C:\Users\Alexander\Documents\Visual Studio 2012\Projects\CsharpToCppConverter\CsharpTpCppConverterTests\bin\Debug\CsharpTpCppConverterTests.pdb
+C:\Users\Alexander\Documents\Visual Studio 2012\Projects\CsharpToCppConverter\CsharpTpCppConverterTests\bin\Debug\CsharpToCppConverter.exe
+C:\Users\Alexander\Documents\Visual Studio 2012\Projects\CsharpToCppConverter\CsharpTpCppConverterTests\bin\Debug\CsharpToCppConverterCore.dll
+C:\Users\Alexander\Documents\Visual Studio 2012\Projects\CsharpToCppConverter\CsharpTpCppConverterTests\bin\Debug\StyleCop.CSharp.dll
+C:\Users\Alexander\Documents\Visual Studio 2012\Projects\CsharpToCppConverter\CsharpTpCppConverterTests\bin\Debug\StyleCop.dll
+C:\Users\Alexander\Documents\Visual Studio 2012\Projects\CsharpToCppConverter\CsharpTpCppConverterTests\bin\Debug\CsharpToCppConverter.pdb
+C:\Users\Alexander\Documents\Visual Studio 2012\Projects\CsharpToCppConverter\CsharpTpCppConverterTests\bin\Debug\CsharpToCppConverterCore.pdb
+C:\Users\Alexander\Documents\Visual Studio 2012\Projects\CsharpToCppConverter\CsharpTpCppConverterTests\obj\Debug\CsharpTpCppConverterTests.csprojResolveAssemblyReference.cache
+C:\Users\Alexander\Documents\Visual Studio 2012\Projects\CsharpToCppConverter\CsharpTpCppConverterTests\obj\Debug\CsharpTpCppConverterTests.Properties.Resources.resources
+C:\Users\Alexander\Documents\Visual Studio 2012\Projects\CsharpToCppConverter\CsharpTpCppConverterTests\obj\Debug\CsharpTpCppConverterTests.csproj.GenerateResource.Cache
+C:\Users\Alexander\Documents\Visual Studio 2012\Projects\CsharpToCppConverter\CsharpTpCppConverterTests\obj\Debug\CsharpTpCppConverterTests.dll
+C:\Users\Alexander\Documents\Visual Studio 2012\Projects\CsharpToCppConverter\CsharpTpCppConverterTests\obj\Debug\CsharpTpCppConverterTests.pdb
+F:\HP\cscpp-23899\CsharpTpCppConverterTests\bin\Debug\CsharpTpCppConverterTests.dll
+F:\HP\cscpp-23899\CsharpTpCppConverterTests\bin\Debug\CsharpTpCppConverterTests.pdb
+F:\HP\cscpp-23899\CsharpTpCppConverterTests\bin\Debug\CsharpToCppConverter.exe
+F:\HP\cscpp-23899\CsharpTpCppConverterTests\bin\Debug\CsharpToCppConverterCore.dll
+F:\HP\cscpp-23899\CsharpTpCppConverterTests\bin\Debug\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll
+F:\HP\cscpp-23899\CsharpTpCppConverterTests\bin\Debug\CsharpToCppConverter.pdb
+F:\HP\cscpp-23899\CsharpTpCppConverterTests\bin\Debug\CsharpToCppConverterCore.pdb
+F:\HP\cscpp-23899\CsharpTpCppConverterTests\obj\Debug\CsharpTpCppConverterTests.csprojResolveAssemblyReference.cache
+F:\HP\cscpp-23899\CsharpTpCppConverterTests\obj\Debug\CsharpTpCppConverterTests.Properties.Resources.resources
+F:\HP\cscpp-23899\CsharpTpCppConverterTests\obj\Debug\CsharpTpCppConverterTests.csproj.GenerateResource.Cache
+F:\HP\cscpp-23899\CsharpTpCppConverterTests\obj\Debug\CsharpTpCppConverterTests.dll
+F:\HP\cscpp-23899\CsharpTpCppConverterTests\obj\Debug\CsharpTpCppConverterTests.pdb
