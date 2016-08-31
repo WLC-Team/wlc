@@ -1,0 +1,9 @@
+F:\HP\cscpp-23899\RefOutTest\bin\Debug\RefOutTest.exe.config
+F:\HP\cscpp-23899\RefOutTest\bin\Debug\RefOutTest.exe
+F:\HP\cscpp-23899\RefOutTest\bin\Debug\RefOutTest.pdb
+F:\HP\cscpp-23899\RefOutTest\obj\Debug\RefOutTest.csprojResolveAssemblyReference.cache
+F:\HP\cscpp-23899\RefOutTest\obj\Debug\RefOutTest.RefOut.resources
+F:\HP\cscpp-23899\RefOutTest\obj\Debug\RefOutTest.Properties.Resources.resources
+F:\HP\cscpp-23899\RefOutTest\obj\Debug\RefOutTest.csproj.GenerateResource.Cache
+F:\HP\cscpp-23899\RefOutTest\obj\Debug\RefOutTest.exe
+F:\HP\cscpp-23899\RefOutTest\obj\Debug\RefOutTest.pdb
