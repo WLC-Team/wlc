@@ -3272,7 +3272,22 @@ namespace Converters
                 }
                 else
                 {
-                    @switch(methodInvocationExpression.Name);
+                    /* Shefali - BugID0003 - Replaced IsNullOrEmpty() and IsNullOrWhiteSpace() with empty()
+                     * Description: Replaced C# Member function of String datatype
+                     * with C++ specific member function of string datatype
+                     */
+                    var IsNullOrEmpty = "string.IsNullOrEmpty";
+                    var IsNullOrWhiteSpace = "string.IsNullOrWhiteSpace";
+                    var empty = "empty";
+                    bool res = ((methodInvocationExpression.Name.Text.Equals(IsNullOrEmpty)) || (methodInvocationExpression.Name.Text.Equals(IsNullOrWhiteSpace)));
+                    if (res)
+                    {
+                        this.Save(empty, this.cppWriter, SavingOptions.RemovePointer);
+                    }
+                    else
+                    {
+                        @switch(methodInvocationExpression.Name);
+                    }
                 }
             }
 
