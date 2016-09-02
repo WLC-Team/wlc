@@ -2400,8 +2400,10 @@ namespace Converters
                 case CsTokenType.New:
                     break;
                 case CsTokenType.Null:
-
-                    this.cppWriter.Write("nullptr");
+                    /* BugID0005:Fixed nullptr conversion for strings.
+                     * instead of nullptr write empty string as definition.
+                     */
+                    this.cppWriter.Write("\"\"");
                     return;
 
                 case CsTokenType.NullableTypeSymbol:
