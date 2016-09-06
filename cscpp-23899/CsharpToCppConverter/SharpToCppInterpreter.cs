@@ -1087,7 +1087,12 @@ namespace Converters
                 this.headerWriter.Write(" ");
             }
 
-            this.headerWriter.Write("ref ");
+            /* Rupa - BugID0007 - "ref" keyword is added when new operator is used
+             * Description: Removed ref keyword and made the variable as pointer when new operator is used. 
+             */
+            //start
+            //this.headerWriter.Write("ref ");
+            //end
 
             this.headerWriter.Write(this.BuildDeclaretionTemplatePart(@class.Declaration.Name));
 
@@ -2154,7 +2159,18 @@ namespace Converters
                 this.cppWriter.Write(nakedClassName);
                 this.cppWriter.Write("::");
             }
-
+            /* Rupa - BugID0007 - "ref" keyword is added when new operator is used
+             * Description: Removed ref keyword and made the variable as pointer when new operator is used. 
+             */
+            //start
+            if (variableDeclaratorExpression.Initializer != null)
+            {
+                if (variableDeclaratorExpression.Initializer.ExpressionType == ExpressionType.New)
+                {
+                    this.cppWriter.Write("*");
+                }
+            }
+            //end
             if (this.saveVariablesMode == SaveVariablesMode.Default)
             {
                 this.SavePrefix(
@@ -2948,9 +2964,16 @@ namespace Converters
             var methodInvocationExpression = newExpression.TypeCreationExpression as MethodInvocationExpression;
             if (methodInvocationExpression != null)
             {
-                this.cppWriter.Write("ref new ");
+                /* Rupa - BugID0007 - "ref" keyword is added when new operator is used
+                 * Description: Removed ref keyword and made the variable as pointer when new operator is used. 
+                 */
+                //start
+                //  this.cppWriter.Write("ref new ");
+                //this.Save(methodInvocationExpression.Name.Text, this.cppWriter, SavingOptions.RemovePointer);
 
-                this.Save(methodInvocationExpression.Name.Text, this.cppWriter, SavingOptions.RemovePointer);
+                this.cppWriter.Write(" new ");
+                this.Save(methodInvocationExpression.Name.Text, this.cppWriter, SavingOptions.None);
+                //end
                 this.cppWriter.Write("(");
                 this.Save(methodInvocationExpression.Arguments);
                 this.cppWriter.Write(")");
