@@ -2724,8 +2724,22 @@ namespace Converters
             }
 
             this.Save(this.GetActualMemberAccess(memberAccessExpression, resolvedTypeReference, members, expressionReturnTypeResolver.IsMemberFound));
-
-            @switch(memberAccessExpression.RightHandSide);
+            
+            /* BugID0004: Fixed IndexOf() to find().
+             * In place of IndexOf(), C# defined string member function,
+             * replaced it with find() C++ defined string member function,
+             * to search a substring/char in the given string.
+             */
+            var indexOf = "IndexOf";
+            var find = "find";
+            if (memberAccessExpression.RightHandSide.Text.Equals(indexOf))
+            {
+                this.Save(find, this.cppWriter, SavingOptions.RemovePointer);
+            }
+            else
+            {
+                @switch(memberAccessExpression.RightHandSide);
+            }
         }
 
         // todo: reduce it
