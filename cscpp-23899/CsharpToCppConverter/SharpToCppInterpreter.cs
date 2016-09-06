@@ -510,7 +510,12 @@ namespace Converters
                     }
                 }
             }
-
+            /* Rupa - BugID0006 - string is getting converted to  Platform::String^ 
+             * Description: Replaced Platform::String^ to string and included <string> header and namespace std
+             */
+            //start
+            this.WriteStdNameSpaceProlog();
+            //end
             this.Save(this.Document.DocumentContents.ChildCodeElements);
 
             this.headerWriter.WriteLine();
@@ -528,6 +533,12 @@ namespace Converters
         {
             this.cppWriter.WriteLine("#include \"pch.h\"");
             this.cppWriter.WriteLine("#include \"{0}\"", string.Concat(this.name, ".h"));
+            /* Rupa - BugID0006 - string is getting converted to  Platform::String^ 
+             * Description: Replaced Platform::String^ to string and included <string> header and namespace std
+             */
+            //start
+            this.cppWriter.WriteLine(@"#include <string>");
+            //end
             this.cppWriter.WriteLine();
         }
 
@@ -540,6 +551,19 @@ namespace Converters
             this.headerWriter.WriteLine("#pragma once");
             this.headerWriter.WriteLine();
         }
+        /* Rupa - BugID0006 - string is getting converted to  Platform::String^ 
+         * Description: Replaced Platform::String^ to string and included <string> header and namespace std
+         */
+        //start
+        /// <summary>
+        /// The write namespace std prolog.
+        /// </summary>
+        public void WriteStdNameSpaceProlog()
+        {
+            this.cppWriter.Write("using namespace std;");
+            this.cppWriter.WriteLine();
+        }
+        //end
 
         #endregion
 

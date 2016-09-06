@@ -400,7 +400,13 @@ namespace Converters
                 case "String":
                 case "string":
                     this.isReference = true;
-                    this.type = isPlatfromIncluded ? "String" : "Platform::String";
+                    /* Rupa - BugID0006 - string is getting converted to  Platform::String^ 
+                    * Description: Replaced Platform::String^ to string and included <string> header and namespace std
+                    */
+                    //start
+                    //this.type = isPlatfromIncluded ? "String" : "Platform::String";
+                    this.type = "string";
+                    //end
                     break;
                 case "Object":
                 case "object":
