@@ -2769,12 +2769,29 @@ namespace Converters
              * In place of IndexOf(), C# defined string member function,
              * replaced it with find() C++ defined string member function,
              * to search a substring/char in the given string.
+             *
+             * Shefali - BugID0008: Fixed Split('@'), replaced with find('@')  
+             * Shefali - BugID0009: Fixed Contains('@'), replaced with strchr('@')
+             * Shefali - BugID0010: Fixed Substring(0, index), replaced with substr(0, index)
              */
             var indexOf = "IndexOf";
             var find = "find";
-            if (memberAccessExpression.RightHandSide.Text.Equals(indexOf))
+            var Split = "Split";
+            var Contains = "Contains";
+            var strchr = "strchr";
+            var Substring = "Substring";
+            var substr = "substr";
+            if ( (memberAccessExpression.RightHandSide.Text.Equals(indexOf)) || (memberAccessExpression.RightHandSide.Text.Equals(Split)) ) 
             {
                 this.Save(find, this.cppWriter, SavingOptions.RemovePointer);
+            }
+            else if (memberAccessExpression.RightHandSide.Text.Equals(Contains))
+            {
+                this.Save(strchr, this.cppWriter, SavingOptions.RemovePointer);
+            }
+            else if (memberAccessExpression.RightHandSide.Text.Equals(Substring))
+            {
+                this.Save(substr, this.cppWriter, SavingOptions.RemovePointer);
             }
             else
             {
