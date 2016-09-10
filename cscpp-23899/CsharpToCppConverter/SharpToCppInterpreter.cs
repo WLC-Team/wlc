@@ -3280,11 +3280,13 @@ namespace Converters
                      */
                     var IsNullOrEmpty = "string.IsNullOrEmpty";
                     var IsNullOrWhiteSpace = "string.IsNullOrWhiteSpace";
-                    var empty = "empty";
+                    var empty = ".empty()";  
                     bool res = ((methodInvocationExpression.Name.Text.Equals(IsNullOrEmpty)) || (methodInvocationExpression.Name.Text.Equals(IsNullOrWhiteSpace)));
                     if (res)
                     {
+                        @switch(methodInvocationExpression.Arguments);
                         this.Save(empty, this.cppWriter, SavingOptions.RemovePointer);
+                        return;
                     }
                     else
                     {
@@ -3296,6 +3298,7 @@ namespace Converters
             this.cppWriter.Write("(");
             @switch(methodInvocationExpression.Arguments);
             this.cppWriter.Write(")");
+            
         }
 
         /// <summary>
