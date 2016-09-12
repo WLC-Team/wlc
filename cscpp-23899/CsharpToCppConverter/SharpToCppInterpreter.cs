@@ -3355,14 +3355,48 @@ namespace Converters
                     /* Shefali - BugID0003 - Replaced IsNullOrEmpty() and IsNullOrWhiteSpace() with empty()
                      * Description: Replaced C# Member function of String datatype
                      * with C++ specific member function of string datatype
+                     * Shefali - BugID0008: Fixed Split('@') replaced with find('@') and substr()
+                     * Shefali - BugID0009: Fixed Contains('@'), replaced with find('@')
                      */
                     var IsNullOrEmpty = "string.IsNullOrEmpty";
                     var IsNullOrWhiteSpace = "string.IsNullOrWhiteSpace";
                     var empty = "empty";
+                    var Contains = "Contains";                    
+                    var Split = "Split";
+                    var find = ".find";
                     bool res = ((methodInvocationExpression.Name.Text.Equals(IsNullOrEmpty)) || (methodInvocationExpression.Name.Text.Equals(IsNullOrWhiteSpace)));
                     if (res)
                     {
                         this.Save(empty, this.cppWriter, SavingOptions.RemovePointer);
+                    }
+                    else if (methodInvocationExpression.Name.FriendlyPluralTypeText != "literal expressions")
+                    {
+                        if (((MemberAccessExpression)methodInvocationExpression.Name).RightHandSide.Text.Equals(Contains))
+                        {                           
+                            var str = " == std::string::npos";
+                            var lhs = ((MemberAccessExpression)methodInvocationExpression.Name).LeftHandSide.Text;
+                            this.Save(lhs, this.cppWriter, SavingOptions.RemovePointer);
+                            this.Save(find, this.cppWriter, SavingOptions.RemovePointer);
+                            this.cppWriter.Write("(");
+                            @switch(methodInvocationExpression.Arguments);
+                            this.cppWriter.Write(")");
+                            this.Save(str, this.cppWriter, SavingOptions.RemovePointer);
+                            return;
+                        }
+                        else if (((MemberAccessExpression)methodInvocationExpression.Name).RightHandSide.Text.Equals(Split))
+                        {
+                            var lhs = ((MemberAccessExpression)methodInvocationExpression.Name).LeftHandSide.Text;
+                            this.Save(lhs, this.cppWriter, SavingOptions.RemovePointer);
+                            this.Save(find, this.cppWriter, SavingOptions.RemovePointer);
+                            this.cppWriter.Write("(");
+                            @switch(methodInvocationExpression.Arguments);
+                            this.cppWriter.Write(")");
+                            var pos = "; \n string str = " + ((MemberAccessExpression)methodInvocationExpression.Name).LeftHandSide.Text + ".substr(0,position)";
+                            this.Save(pos, this.cppWriter, SavingOptions.RemovePointer);
+                            var comment = "; \n //please edit above 'string' as 'int position' ";
+                            this.Save(comment, this.cppWriter, SavingOptions.RemovePointer);
+                            return;
+                        }
                     }
                     else
                     {
