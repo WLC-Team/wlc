@@ -3636,6 +3636,15 @@ namespace Converters
         private void Save(CatchStatement catchStatement)
         {
             this.cppWriter.Write("catch (");
+            /* Rupa - BugID0011 - Exception handling 
+            * Description: Replaced Exception class of C# to std::exception and this handles only exceptions defined in standard exception class of C++.
+             */
+            //start
+            if (catchStatement.CatchExpression.Text.Contains("Exception"))
+            {
+                this.cppWriter.Write("std::");
+            }
+            //end
             @switch(catchStatement.CatchExpression);
 
             if (catchStatement.CatchExpression is LiteralExpression)
@@ -3886,10 +3895,23 @@ namespace Converters
         /// </param>
         private void Save(TypeResolver typeResolver, IndentedTextWriter writer, SavingOptions savingOptions)
         {
-            writer.Write(
-                savingOptions.HasFlag(SavingOptions.UseFullyQualifiedNames) || !typeResolver.IsNamespaceInUsingDerictives
-                    ? typeResolver.GetCxFullyQualifiedType(savingOptions)
-                    : typeResolver.GetCxType(savingOptions));
+            /* Rupa - BugID0011 - Exception handling 
+            * Description: Replaced Exception class of C# to std::exception and this handles only exceptions defined in standard exception class of C++.
+             */
+            //start
+            string checkException = typeResolver.GetCxType(savingOptions);
+            if (checkException.Equals("Exception"))
+            {
+                writer.Write("exception");
+            }
+            else
+            {
+                writer.Write(
+                    savingOptions.HasFlag(SavingOptions.UseFullyQualifiedNames) || !typeResolver.IsNamespaceInUsingDerictives
+                        ? typeResolver.GetCxFullyQualifiedType(savingOptions)
+                        : typeResolver.GetCxType(savingOptions));
+            }
+            //end
         }
 
         /// <summary>
