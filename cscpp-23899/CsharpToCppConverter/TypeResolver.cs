@@ -236,8 +236,14 @@ namespace Converters
                 {
                     name = name.Substring(lastNamespaceChars + 2);
                 }
+                /* Rupa - BugID0006 - string is getting converted to  Platform::String^   
+                * Description: Replaced Platform::String^ to string and included <string> header and namespace std 
+                */  
+                //start  
 
-                return string.Concat(this.Namespace.Replace(".", "::"), "::", name);
+               // return string.Concat(this.Namespace.Replace(".", "::"), "::", name);
+                return name;
+                //end
             }
 
             return name;
@@ -399,11 +405,11 @@ namespace Converters
                     break;
                 case "String":
                 case "string":
-                    this.isReference = true;
                     /* Rupa - BugID0006 - string is getting converted to  Platform::String^ 
                     * Description: Replaced Platform::String^ to string and included <string> header and namespace std
                     */
                     //start
+                    this.isReference = false;
                     //this.type = isPlatfromIncluded ? "String" : "Platform::String";
                     this.type = "string";
                     //end
