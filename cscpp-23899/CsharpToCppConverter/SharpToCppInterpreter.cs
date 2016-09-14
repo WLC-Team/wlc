@@ -2873,6 +2873,15 @@ namespace Converters
                     {
                         return MemberAccessExpression.Operator.Dot;
                     }
+                    /* Rupa - BugID0012 - Scope resolution operator getting placed in place of . operator 
+                    * Description: Replaced Scope resolution operator(::) with (.) operator.
+                     */
+                    //start
+                    else if (current.LeftHandSide is LiteralExpression)
+                    {
+                        return MemberAccessExpression.Operator.Dot;
+                    }
+                    //end
 
                     current = current.LeftHandSide as MemberAccessExpression;
                 }
