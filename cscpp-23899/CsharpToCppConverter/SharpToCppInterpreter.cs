@@ -1055,9 +1055,24 @@ namespace Converters
                 this.IsPlatformUsedInUsingDirectives = true;
             }
 
-            this.cppWriter.Write("using namespace ");
-            this.cppWriter.Write(realNamespace.Replace(".", "::"));
-            this.cppWriter.WriteLine(";");
+            /* Rupa - BugID0012 - Using directive for System namespace 
+            * Description: Removed using statements of System namespace and added using namespace std.
+             */
+            //start
+            if (realNamespace.Contains("System"))
+            {
+                if (this.usingDirectives.Count <= 1)
+                {
+                    this.cppWriter.WriteLine("using namespace std;");
+                }
+            }
+            else
+            {
+                this.cppWriter.Write("using namespace ");
+                this.cppWriter.Write(realNamespace.Replace(".", "::"));
+                this.cppWriter.WriteLine(";");
+            }
+            //end
         }
 
         /// <summary>
