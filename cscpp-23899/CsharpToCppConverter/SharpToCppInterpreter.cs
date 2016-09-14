@@ -1418,7 +1418,7 @@ namespace Converters
                 return;
             }
 
-            // 1 to destHeader
+             // 1 to destHeader
             this.SaveModifiersBefore(@constructor);
 
             // 1 to destHeader
@@ -1438,12 +1438,33 @@ namespace Converters
             if (!this.IsCPPInHeader)
             {
                 this.headerWriter.WriteLine(';');
+                //tamalika
+                this.headerWriter.Write("private: ~");
+                this.headerWriter.Write(@constructor.Declaration.Name);
+                this.headerWriter.Write("();");
+                this.headerWriter.WriteLine();
+                //tamalika
             }
 
             this.SaveDefaultConstructorInitializer(constructor, this.SaveFieldInitializersIntoDefaultConstructor(false));
 
             this.Save((ICodeUnit)@constructor);
 
+            this.cppWriter.WriteLine();
+
+            //tamalika
+            this.cppWriter.Write(this.currentClassNamespace);
+            this.cppWriter.Write("::");
+            this.cppWriter.Write("~");
+            this.cppWriter.Write(@constructor.Declaration.Name);
+            this.cppWriter.Write("()");
+            this.cppWriter.WriteLine();
+            this.cppWriter.Write("{");
+            this.cppWriter.WriteLine();
+
+            this.cppWriter.Write("}");
+            //this.SaveParametersAndBody(@constructor);
+            //tamalika
             this.cppWriter.WriteLine();
         }
 
@@ -3341,6 +3362,9 @@ namespace Converters
             if (methodInvocationExpression.Name.Text == "base")
             {
                 this.Save(this.currentBaseClass, this.cppWriter, SavingOptions.RemovePointer);
+                this.cppWriter.Write("(");
+                @switch(methodInvocationExpression.Arguments);
+                this.cppWriter.Write(")");
             }
             else
             {
@@ -3349,31 +3373,72 @@ namespace Converters
                 {
                     // you need to process generic types
                     this.Save(methodInvocationExpression.Name.Text, this.cppWriter, SavingOptions.RemovePointer);
+                    this.cppWriter.Write("(");
+                    @switch(methodInvocationExpression.Arguments);
+                    this.cppWriter.Write(")");
                 }
                 else
                 {
                     /* Shefali - BugID0003 - Replaced IsNullOrEmpty() and IsNullOrWhiteSpace() with empty()
                      * Description: Replaced C# Member function of String datatype
                      * with C++ specific member function of string datatype
-                     * Shefali - BugID0008: Fixed Split('@') replaced with find('@') and substr()
-                     * Shefali - BugID0009: Fixed Contains('@'), replaced with find('@')
                      */
                     var IsNullOrEmpty = "string.IsNullOrEmpty";
                     var IsNullOrWhiteSpace = "string.IsNullOrWhiteSpace";
-                    var empty = "empty";
+                    var empty = ".empty";
                     var Contains = "Contains";                    
                     var Split = "Split";
                     var find = ".find";
                     bool res = ((methodInvocationExpression.Name.Text.Equals(IsNullOrEmpty)) || (methodInvocationExpression.Name.Text.Equals(IsNullOrWhiteSpace)));
+
+                    /* Tamalika - Replaced Convert.ToUInt32,Convert.ToUInt64,Convert.ToInt64,Convert.ToInt32,Convert.ToInt16 with atoi
+                     * Description: String to Integer Conversion
+                     */
+                    var ConvertToUInt64 = "Convert.ToUInt64";
+                    var ConvertToUInt32 = "Convert.ToUInt32";
+                    var ConvertToInt64 = "Convert.ToInt64";
+                    var ConvertToInt32 = "Convert.ToInt32";
+                    var ConvertToInt16 = "Convert.ToInt16";
+                    var atoi = "atoi";
+                    var c_str = ".c_str()";
+                    string new_method_name = methodInvocationExpression.Text;
+                    int startindex = new_method_name.IndexOf("(");
+                    string argumentpassed = "";
+                    for (int k = startindex + 1; k < new_method_name.LastIndexOf(")"); k++)
+                        argumentpassed += new_method_name[k];
+                    string method_name_final = "";
+                    bool res2 = ((methodInvocationExpression.Name.Text.Equals(ConvertToUInt64)) || (methodInvocationExpression.Name.Text.Equals(ConvertToUInt32)) || (methodInvocationExpression.Name.Text.Equals(ConvertToInt64)) || (methodInvocationExpression.Name.Text.Equals(ConvertToInt32)) || (methodInvocationExpression.Name.Text.Equals(ConvertToInt16)));
+
                     if (res)
                     {
+                        /* tamalika - edited empty() function in the correct format */
+                        this.cppWriter.Write(argumentpassed);
                         this.Save(empty, this.cppWriter, SavingOptions.RemovePointer);
+                        this.cppWriter.Write("(");
+                        //@switch(methodInvocationExpression.Arguments);
+                        this.cppWriter.Write(")");
+                    }
+                    else if (res2)
+                    {
+                        int closing = new_method_name.LastIndexOf(')');
+                        string c_str_included = new_method_name.Insert(closing, c_str);
+                        if (methodInvocationExpression.Name.Text.Equals(ConvertToUInt64))
+                            method_name_final = c_str_included.Replace(ConvertToUInt64, atoi);
+                        else if (methodInvocationExpression.Name.Text.Equals(ConvertToUInt32))
+                            method_name_final = c_str_included.Replace(ConvertToUInt32, atoi);
+                        else if (methodInvocationExpression.Name.Text.Equals(ConvertToInt64))
+                            method_name_final = c_str_included.Replace(ConvertToInt64, atoi);
+                        else if (methodInvocationExpression.Name.Text.Equals(ConvertToInt32))
+                            method_name_final = c_str_included.Replace(ConvertToInt32, atoi);
+                        else if (methodInvocationExpression.Name.Text.Equals(ConvertToInt16))
+                            method_name_final = c_str_included.Replace(ConvertToInt16, atoi);
+                        this.Save(method_name_final, this.cppWriter, SavingOptions.RemovePointer);
                     }
                     else if (methodInvocationExpression.Name.FriendlyPluralTypeText != "literal expressions")
                     {
                         if (((MemberAccessExpression)methodInvocationExpression.Name).RightHandSide.Text.Equals(Contains))
-                        {                           
-                            var str = " == std::string::npos";
+                        {
+                            var str = " != std::string::npos";
                             var lhs = ((MemberAccessExpression)methodInvocationExpression.Name).LeftHandSide.Text;
                             this.Save(lhs, this.cppWriter, SavingOptions.RemovePointer);
                             this.Save(find, this.cppWriter, SavingOptions.RemovePointer);
@@ -3386,28 +3451,39 @@ namespace Converters
                         else if (((MemberAccessExpression)methodInvocationExpression.Name).RightHandSide.Text.Equals(Split))
                         {
                             var lhs = ((MemberAccessExpression)methodInvocationExpression.Name).LeftHandSide.Text;
+
+                            /* tamalika - replaced split() with proper alternative......
+                             * no need of manual addition of code
+                             * */
+                            var pos = ((MemberAccessExpression)methodInvocationExpression.Name).LeftHandSide.Text + ".substr(0,";
+                            this.Save(pos, this.cppWriter, SavingOptions.RemovePointer);
                             this.Save(lhs, this.cppWriter, SavingOptions.RemovePointer);
                             this.Save(find, this.cppWriter, SavingOptions.RemovePointer);
                             this.cppWriter.Write("(");
                             @switch(methodInvocationExpression.Arguments);
-                            this.cppWriter.Write(")");
-                            var pos = "; \n string str = " + ((MemberAccessExpression)methodInvocationExpression.Name).LeftHandSide.Text + ".substr(0,position)";
-                            this.Save(pos, this.cppWriter, SavingOptions.RemovePointer);
-                            var comment = "; \n //please edit above 'string' as 'int position' ";
-                            this.Save(comment, this.cppWriter, SavingOptions.RemovePointer);
+                            this.cppWriter.Write("))");
+                            //var comment = " \n //please edit above 'string' as 'int position' ";
+                            //this.Save(comment, this.cppWriter, SavingOptions.RemovePointer);
                             return;
                         }
+                        @switch(methodInvocationExpression.Name);
+                        this.cppWriter.Write("(");
+                        @switch(methodInvocationExpression.Arguments);
+                        this.cppWriter.Write(")");
                     }
                     else
                     {
                         @switch(methodInvocationExpression.Name);
+                        this.cppWriter.Write("(");
+                        @switch(methodInvocationExpression.Arguments);
+                        this.cppWriter.Write(")");
                     }
                 }
             }
 
-            this.cppWriter.Write("(");
-            @switch(methodInvocationExpression.Arguments);
-            this.cppWriter.Write(")");
+            //this.cppWriter.Write("(");
+           // @switch(methodInvocationExpression.Arguments);
+            //this.cppWriter.Write(")");
         }
 
         /// <summary>
