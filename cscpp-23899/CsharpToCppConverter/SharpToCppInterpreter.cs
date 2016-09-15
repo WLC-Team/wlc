@@ -2154,7 +2154,6 @@ namespace Converters
             var variableName = variableDeclarationExpression.Type;
             this.cppWriter.Write(variableName);
             //end
-
             if (this.saveVariablesMode == SaveVariablesMode.AppendRightReferene)
             {
                 this.cppWriter.Write("&&");
