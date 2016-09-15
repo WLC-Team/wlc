@@ -3968,7 +3968,10 @@ namespace Converters
             switch (accessModifierType)
             {
                 case AccessModifierType.Internal:
-                    this.headerWriter.Write("internal");
+                    /*tamalika - "internal" access modifier is not there in C++
+                     *changing this to default access modifier of C++ which is "private" 
+                     */
+                    this.headerWriter.Write("private");
                     break;
                 case AccessModifierType.Private:
                     this.headerWriter.Write("private");
