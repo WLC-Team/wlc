@@ -2147,7 +2147,13 @@ namespace Converters
                                     ? SavingOptions.None
                                     : SavingOptions.UseFullyQualifiedNames;
 
-            this.Save(variableDeclarationExpression.Type, this.cppWriter, savingOptions);
+            /*Tamalika - for statements initializing user defined classes with new operator, a '^' was coming
+             * after the class name. Fixed this issue.
+             * */
+            //start
+            var variableName = variableDeclarationExpression.Type;
+            this.cppWriter.Write(variableName);
+            //end
 
             if (this.saveVariablesMode == SaveVariablesMode.AppendRightReferene)
             {
@@ -2230,7 +2236,20 @@ namespace Converters
                 && this.saveVariablesMode != SaveVariablesMode.DoNotSaveInitializers)
             {
                 this.cppWriter.Write(" = ");
-                @switch(variableDeclaratorExpression.Initializer);
+                /*tamalika - for statements initializing user defined classes with new operator, a '^' was coming
+                 * after the class name. Fixed this issue.
+                 * */
+                //start
+                if(variableDeclaratorExpression.Initializer.ExpressionType == ExpressionType.New)
+                {
+                    var initializer = variableDeclaratorExpression.Initializer.Text;
+                    this.cppWriter.Write(initializer);
+                }
+                else
+                {
+                    @switch(variableDeclaratorExpression.Initializer);
+                }
+               //end 
             }
         }
 
