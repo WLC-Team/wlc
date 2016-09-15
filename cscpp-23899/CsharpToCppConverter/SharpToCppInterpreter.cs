@@ -2786,53 +2786,55 @@ namespace Converters
 
             var resolvedTypeReference = new TypeResolver(memberAccessExpression.LeftHandSide.Text, this);
 
-            if (resolvedTypeReference.IsClassName || resolvedTypeReference.IsEnum)
-            {
-                bool isFullyQualified = memberAccessExpression.LeftHandSide.Text.StartsWith(resolvedTypeReference.Namespace);
-                this.cppWriter.Write(
-                    isFullyQualified
-                        ? resolvedTypeReference.GetCXFullyQualifiedName(SavingOptions.None)
-                        : resolvedTypeReference.GetCxName(SavingOptions.None));
-            }
-            else
-            {
-                @switch(memberAccessExpression.LeftHandSide);
-            }
-
-            this.Save(this.GetActualMemberAccess(memberAccessExpression, resolvedTypeReference, members, expressionReturnTypeResolver.IsMemberFound));
-            
-            /* BugID0004: Fixed IndexOf() to find().
-             * In place of IndexOf(), C# defined string member function,
-             * replaced it with find() C++ defined string member function,
-             * to search a substring/char in the given string.
-             *
-             * Shefali - BugID0008: Fixed Split('@'), replaced with find('@')  
-             * Shefali - BugID0009: Fixed Contains('@'), replaced with strchr('@')
-             * Shefali - BugID0010: Fixed Substring(0, index), replaced with substr(0, index)
-             */
+            //Tamalika - 
             var indexOf = "IndexOf";
-            var find = "find";
-            var Split = "Split";
-            var Contains = "Contains";
-            var strchr = "strchr";
             var Substring = "Substring";
-            var substr = "substr";
-            if ( (memberAccessExpression.RightHandSide.Text.Equals(indexOf)) || (memberAccessExpression.RightHandSide.Text.Equals(Split)) ) 
+            if ((memberAccessExpression.RightHandSide.Text.Equals(indexOf) || memberAccessExpression.RightHandSide.Text.Equals(Substring)))
             {
-                this.Save(find, this.cppWriter, SavingOptions.RemovePointer);
-            }
-            else if (memberAccessExpression.RightHandSide.Text.Equals(Contains))
-            {
-                this.Save(strchr, this.cppWriter, SavingOptions.RemovePointer);
-            }
-            else if (memberAccessExpression.RightHandSide.Text.Equals(Substring))
-            {
-                this.Save(substr, this.cppWriter, SavingOptions.RemovePointer);
+                /* BugID0004: Fixed IndexOf() to find().
+              * In place of IndexOf(), C# defined string member function,
+              * replaced it with find() C++ defined string member function,
+              * to search a substring/char in the given string.
+              *
+              * Shefali - BugID0010: Fixed Substring(0, index), replaced with substr(0, index)
+              * Tamalika - removed code for 'Contains' and 'Split'. Changed code for substr() and find() for it work properly
+              */
+                var lhs = memberAccessExpression.LeftHandSide.Text;
+                if (memberAccessExpression.RightHandSide.Text.Equals(indexOf))
+                {
+                    //this.Save(find, this.cppWriter, SavingOptions.RemovePointer);
+                    this.Save(lhs, this.cppWriter, SavingOptions.RemovePointer);
+                    this.cppWriter.Write(".find");
+                }
+                else if (memberAccessExpression.RightHandSide.Text.Equals(Substring))
+                {
+                    //tamalika
+                    this.Save(lhs, this.cppWriter, SavingOptions.RemovePointer);
+                    this.cppWriter.Write(".substr");
+                }
+                else
+                {
+                    @switch(memberAccessExpression.RightHandSide);
+                }
             }
             else
             {
+                if (resolvedTypeReference.IsClassName || resolvedTypeReference.IsEnum)
+                {
+                    bool isFullyQualified = memberAccessExpression.LeftHandSide.Text.StartsWith(resolvedTypeReference.Namespace);
+                    this.cppWriter.Write(
+                        isFullyQualified
+                           ? resolvedTypeReference.GetCXFullyQualifiedName(SavingOptions.None)
+                              : resolvedTypeReference.GetCxName(SavingOptions.None));
+                }
+                else
+                {
+                    @switch(memberAccessExpression.LeftHandSide);
+                }
+
+                this.Save(this.GetActualMemberAccess(memberAccessExpression, resolvedTypeReference, members, expressionReturnTypeResolver.IsMemberFound));
                 @switch(memberAccessExpression.RightHandSide);
-            }
+           }
         }
 
         // todo: reduce it
