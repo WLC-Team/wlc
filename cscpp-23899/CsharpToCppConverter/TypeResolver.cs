@@ -320,7 +320,10 @@ namespace Converters
 
             if ((this.NamespaceNode != null && !savingOptions.HasFlag(SavingOptions.RemovePointer) && this.isReference) || this.isPointer)
             {
-                buildType = string.Concat(buildType, "^");
+                /*Tamalika - for statements initializing user defined classes with new operator, a '^' was coming
+                * after the class name. Fixed this issue.
+                * */
+                //buildType = string.Concat(buildType, "^");
             }
 
             if (savingOptions.HasFlag(SavingOptions.ApplyReference))
