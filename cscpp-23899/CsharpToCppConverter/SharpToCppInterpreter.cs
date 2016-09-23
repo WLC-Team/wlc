@@ -2798,7 +2798,27 @@ namespace Converters
         private void Save(MemberAccessExpression memberAccessExpression)
         {
             // todo: investigate why it returns multiple result with the same methods
-            var expressionReturnTypeResolver = new ExpressionReturnTypeResolver(this);
+            var expressionReturnTypeResolver = new ExpressionReturnTypeResolver(this); 
+            
+            //Shefali- AddressBook:Fixed System.NotImplementedException and System.Collections.Generic.KeyNotFoundException
+            var This = "this";
+            var Base = "base";
+            if ((memberAccessExpression.LeftHandSide.Text.Contains('+')) || (memberAccessExpression.LeftHandSide.Text.Contains('-'))
+                || (memberAccessExpression.LeftHandSide.Text.Equals(This)))
+            {
+                @switch(memberAccessExpression.LeftHandSide);
+                this.cppWriter.Write(".");
+                @switch(memberAccessExpression.RightHandSide);
+                return;
+            }
+            else if (memberAccessExpression.LeftHandSide.Text.Contains(Base))
+            {
+                //Shefali- AddressBook:Fixed System.ArgumentException
+                @switch(memberAccessExpression.LeftHandSide);
+                @switch(memberAccessExpression.RightHandSide);
+                return;
+            }
+            
             var resolvedCodeElements = expressionReturnTypeResolver.Resolve(memberAccessExpression.LeftHandSide);
             var members = resolvedCodeElements.ToList();
 
@@ -3043,6 +3063,7 @@ namespace Converters
         /// </param>
         private void Save(NewExpression newExpression)
         {
+            var curlyBrace = '{';
             var methodInvocationExpression = newExpression.TypeCreationExpression as MethodInvocationExpression;
             if (methodInvocationExpression != null)
             {
@@ -3061,6 +3082,13 @@ namespace Converters
                 this.cppWriter.Write(")");
 
                 @switch(newExpression.InitializerExpression);
+            }
+            else if (newExpression.Text.Contains(curlyBrace))
+            {
+                //Shefali- AddressBook:Fixed System.NotImplementedException
+                this.cppWriter.Write(" new ");
+                this.Save(newExpression.TypeCreationExpression.Text, this.cppWriter, SavingOptions.None);
+                this.Save(newExpression.InitializerExpression.Text, this.cppWriter, SavingOptions.None);                                        
             }
             else
             {
@@ -3480,35 +3508,39 @@ namespace Converters
                     }
                     else if (methodInvocationExpression.Name.FriendlyPluralTypeText != "literal expressions")
                     {
-                        if (((MemberAccessExpression)methodInvocationExpression.Name).RightHandSide.Text.Equals(Contains))
+                        //Shefali- AddressBook:Fixed System.InvalidCastException
+                        if (methodInvocationExpression.Name.FriendlyPluralTypeText != "new expressions")
                         {
-                            var str = " != std::string::npos";
-                            var lhs = ((MemberAccessExpression)methodInvocationExpression.Name).LeftHandSide.Text;
-                            this.Save(lhs, this.cppWriter, SavingOptions.RemovePointer);
-                            this.Save(find, this.cppWriter, SavingOptions.RemovePointer);
-                            this.cppWriter.Write("(");
-                            @switch(methodInvocationExpression.Arguments);
-                            this.cppWriter.Write(")");
-                            this.Save(str, this.cppWriter, SavingOptions.RemovePointer);
-                            return;
-                        }
-                        else if (((MemberAccessExpression)methodInvocationExpression.Name).RightHandSide.Text.Equals(Split))
-                        {
-                            var lhs = ((MemberAccessExpression)methodInvocationExpression.Name).LeftHandSide.Text;
+                            if (((MemberAccessExpression)methodInvocationExpression.Name).RightHandSide.Text.Equals(Contains))
+                            {
+                                var str = " != std::string::npos";
+                                var lhs = ((MemberAccessExpression)methodInvocationExpression.Name).LeftHandSide.Text;
+                                this.Save(lhs, this.cppWriter, SavingOptions.RemovePointer);
+                                this.Save(find, this.cppWriter, SavingOptions.RemovePointer);
+                                this.cppWriter.Write("(");
+                                @switch(methodInvocationExpression.Arguments);
+                                this.cppWriter.Write(")");
+                                this.Save(str, this.cppWriter, SavingOptions.RemovePointer);
+                                return;
+                            }
+                            else if (((MemberAccessExpression)methodInvocationExpression.Name).RightHandSide.Text.Equals(Split))
+                            {
+                                var lhs = ((MemberAccessExpression)methodInvocationExpression.Name).LeftHandSide.Text;
 
-                            /* tamalika - replaced split() with proper alternative......
-                             * no need of manual addition of code
-                             * */
-                            var pos = ((MemberAccessExpression)methodInvocationExpression.Name).LeftHandSide.Text + ".substr(0,";
-                            this.Save(pos, this.cppWriter, SavingOptions.RemovePointer);
-                            this.Save(lhs, this.cppWriter, SavingOptions.RemovePointer);
-                            this.Save(find, this.cppWriter, SavingOptions.RemovePointer);
-                            this.cppWriter.Write("(");
-                            @switch(methodInvocationExpression.Arguments);
-                            this.cppWriter.Write("))");
-                            //var comment = " \n //please edit above 'string' as 'int position' ";
-                            //this.Save(comment, this.cppWriter, SavingOptions.RemovePointer);
-                            return;
+                                /* tamalika - replaced split() with proper alternative......
+                                * no need of manual addition of code
+                                * */
+                                var pos = ((MemberAccessExpression)methodInvocationExpression.Name).LeftHandSide.Text + ".substr(0,";
+                                this.Save(pos, this.cppWriter, SavingOptions.RemovePointer);
+                                this.Save(lhs, this.cppWriter, SavingOptions.RemovePointer);
+                                this.Save(find, this.cppWriter, SavingOptions.RemovePointer);
+                                this.cppWriter.Write("(");
+                                @switch(methodInvocationExpression.Arguments);
+                                this.cppWriter.Write("))");
+                                //var comment = " \n //please edit above 'string' as 'int position' ";
+                                //this.Save(comment, this.cppWriter, SavingOptions.RemovePointer);
+                             return;
+                            }
                         }
                         @switch(methodInvocationExpression.Name);
                         this.cppWriter.Write("(");
@@ -3524,10 +3556,6 @@ namespace Converters
                     }
                 }
             }
-
-            //this.cppWriter.Write("(");
-           // @switch(methodInvocationExpression.Arguments);
-            //this.cppWriter.Write(")");
         }
 
         /// <summary>
@@ -3682,11 +3710,15 @@ namespace Converters
             this.cppWriter.Write("catch (");
             /* Rupa - BugID0011 - Exception handling 
             * Description: Replaced Exception class of C# to std::exception and this handles only exceptions defined in standard exception class of C++.
-             */
+            */
             //start
-            if (catchStatement.CatchExpression.Text.Contains("Exception"))
+            //Rupa- AddressBook:Fixed NullReferenceException
+            if (catchStatement.CatchExpression != null)
             {
-                this.cppWriter.Write("std::");
+                if (catchStatement.CatchExpression.Text.Contains("Exception"))
+                {
+                    this.cppWriter.Write("std::");
+                }
             }
             //end
             @switch(catchStatement.CatchExpression);
@@ -4021,12 +4053,19 @@ namespace Converters
         private void Save(Statement statement)
         {
             var blockStatement = statement as BlockStatement;
+            var yieldstatement = statement as YieldStatement;
             if (blockStatement != null)
             {
                 // this.SetMarkBeginOfBlock();
                 this.Save(blockStatement);
 
                 // this.SetMarkEndOfBlock();
+            }
+            //Rupa - AddressBook:Fixed System.StackOverflowException
+            else if (yieldstatement != null)
+            {
+                this.cppWriter.Write(" yield return ");
+                @switch(yieldstatement.ReturnValue);
             }
             else
             {
