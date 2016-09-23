@@ -99,6 +99,13 @@ namespace Converters
             {
                 return this.Resolve(newExpression.TypeCreationExpression, resolvedContext);
             }
+            
+            //Rupa AddressBook:Fixed System.NotImplementedException
+            var typeofExpression = expression as TypeofExpression;
+            if (typeofExpression != null)
+            {
+                return this.Pairs(this.TryResolveNameAsGlobalOrInUsingNamespaces(typeofExpression.Type).Get(), typeofExpression.Type, (ICodeElement)null);
+            }
 
             throw new NotImplementedException();
         }
