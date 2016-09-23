@@ -2818,6 +2818,14 @@ namespace Converters
                 @switch(memberAccessExpression.RightHandSide);
                 return;
             }
+            else if (memberAccessExpression.LeftHandSide.Text.Contains(Global))
+            {
+                //Shefali- AddressBook:Fixed System.NotImplementedException
+                @switch(memberAccessExpression.LeftHandSide);
+                this.cppWriter.Write(".");
+                @switch(memberAccessExpression.RightHandSide);
+                return;
+            }
             
             var resolvedCodeElements = expressionReturnTypeResolver.Resolve(memberAccessExpression.LeftHandSide);
             var members = resolvedCodeElements.ToList();
