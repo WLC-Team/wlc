@@ -129,8 +129,10 @@
                 || type == CorElementType.ELEMENT_TYPE_BOOLEAN
                 || type == CorElementType.ELEMENT_TYPE_OBJECT
                 || type == CorElementType.ELEMENT_TYPE_STRING
-                || type == CorElementType.ELEMENT_TYPE_VOID)
+                || type == CorElementType.ELEMENT_TYPE_VOID
+                || type == CorElementType.ELEMENT_TYPE_PTR)
             {
+                //Shefali- AddressBook:Fixed System.NotImplementedException- ELEMENT_TYPE_PTR
                 // ignore it is value type
                 // todo: do I need to read it from Plaform.winmd?
                 // todo: what is ELEMENT_TYPE_VAR <number>?
