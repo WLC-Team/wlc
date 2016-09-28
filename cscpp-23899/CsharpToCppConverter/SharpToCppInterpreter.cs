@@ -2803,6 +2803,7 @@ namespace Converters
             //Shefali- AddressBook:Fixed System.NotImplementedException and System.Collections.Generic.KeyNotFoundException
             var This = "this";
             var Base = "base";
+            var Global = "global";
             if ((memberAccessExpression.LeftHandSide.Text.Contains('+')) || (memberAccessExpression.LeftHandSide.Text.Contains('-'))
                 || (memberAccessExpression.LeftHandSide.Text.Equals(This)))
             {
