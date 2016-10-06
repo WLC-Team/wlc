@@ -635,10 +635,17 @@ namespace Converters
             {
                 foreach (var classHierarchy in this.SelectClassHierarchy(@class))
                 {
-                    yield return classHierarchy;
+                    //Rupa AddressBook:Fixed Hand issue of the CSCPP application
+                    var typecheck = classHierarchy as TypeDefinitionMetadataICodeElementAdapter;
+                    if (typecheck != null)
+                    {
+                        yield break;
+                    }
+                    else
+                    {
+                        yield return classHierarchy;
+                    }
                 }
-
-                yield break;
             }
 
             var typeDefinition = codeElement as TypeDefinitionMetadataICodeElementAdapter;
